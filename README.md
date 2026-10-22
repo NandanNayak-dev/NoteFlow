@@ -1,61 +1,143 @@
-# Notex â€” URL-First Note-Taking Web Application
+# NoteFlow ? — Frictionless, URL-First Note-Taking Web App
 
-A production-ready, URL-first note-taking web application built with the **MERN** stack (MongoDB, Express, React, Node.js) and styled with **Tailwind CSS**.
+A modern, production-ready, URL-first note-taking application built with the **MERN** stack (MongoDB, Express.js, React.js, Node.js) and styled with **Tailwind CSS**. 
 
----
-
-## âš¡ Core Concepts
-
-- **URL-First Notes:** Every unique path/slug corresponds to a note (`domain.com/:slug`).
-- **Zero Friction:** Visiting any slug that doesn't yet exist automatically instantiates a new note in MongoDB. No login, signups, or setup required.
-- **Debounced Auto-Save:** Automatically persists editor changes to MongoDB 1.5 seconds after typing ceases, with active visual status badges (`Saved`, `Saving...`, `Unsaved`, `Error`).
-- **Rich Text Experience:** TipTap-powered editor with Headings, Bold, Italic, Strikethrough, Bullet Lists, Numbered Lists, Task Checklists, Code Blocks, Blockquotes, and Undo/Redo.
-- **Dark Mode & Light Mode:** Seamless theme toggle with persistent preferences saved to `localStorage`.
-- **QR Code Generator:** Instant high-contrast QR code for phone camera scanning and 1-click PNG downloads.
-- **Auto-Expiration (TTL):** Optional self-destruct timers (1 hour, 24 hours, 7 days, 30 days) powered by MongoDB background TTL indexes.
+Any unique URL path is an instant, live note with zero sign-up friction, real-time debounced auto-saving, rich formatting, dark/light modes, QR code sharing, and MongoDB TTL auto-destruction.
 
 ---
 
-## ðŸš€ Deployment Guide (e.g. Render / Railway)
+## ? Features
 
-### 1. Configure MongoDB Atlas Connection String
-Add your database name (e.g., `notex`) and query parameters:
+- **?? URL-First Architecture:** Every unique URL slug corresponds to a distinct note (e.g., `yourdomain.com/meeting-notes` or `yourdomain.com/daily-todo`).
+- **? Zero-Friction Instant Note Creation:** Navigating to any unused slug immediately creates and opens a fresh, editable note in MongoDB without requiring any registration or login.
+- **?? Debounced Cloud Auto-Save:** Automatically persists edits to the cloud **1.5 seconds** after the user stops typing, complete with visual state badges (`Saved`, `Saving...`, `Unsaved`, `Save Error`).
+- **?? TipTap Rich Text Editor:** Fully featured editor supporting Headings (H1, H2), Bold, Italic, Strikethrough, Bullet Lists, Numbered Lists, Interactive Task Checklists, Code Blocks, Blockquotes, and Undo/Redo.
+- **?? Dark Mode & Light Mode:** Seamless, animated theme toggle with persistent user preferences stored in `localStorage`.
+- **?? QR Code Generator:** Instantly generate, scan, or download high-contrast PNG QR codes of any note to open on mobile cameras.
+- **? Self-Destruct Timer (TTL Auto-Expiry):** Optional expiration settings (1 hour, 24 hours, 7 days, 30 days) powered by native MongoDB background TTL indexes.
+- **?? Real-Time Metadata:** Live word count, character count, and browser-local recent notes history.
 
-```env
-MONGODB_URI=mongodb+srv://<username>:<YOUR_PASSWORD>@cluster0.example.mongodb.net/notex?retryWrites=true&w=majority
-NODE_ENV=production
+---
+
+## ??? Tech Stack
+
+### Frontend
+- **Framework:** React 18 (Vite)
+- **Styling:** Tailwind CSS (Dark/Light mode support)
+- **Editor:** TipTap (`@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/extension-task-list`)
+- **Icons:** Lucide React
+- **QR Code:** `qrcode.react`
+- **Routing:** React Router v6
+
+### Backend
+- **Runtime:** Node.js (ES Modules)
+- **Framework:** Express.js
+- **Database:** MongoDB Atlas (Cloud)
+- **ODM:** Mongoose (with automated TTL expiration indexes)
+- **CORS & Middleware:** `cors`, `dotenv`, `express.json`
+
+---
+
+## ?? Project Directory Structure
+
+```text
+NoteFlow/
++-- backend/
+¦   +-- models/
+¦   ¦   +-- Note.js             # Mongoose schema with TTL index & timestamps
+¦   +-- routes/
+¦   ¦   +-- noteRoutes.js       # REST endpoints (GET, PUT, auto-creation)
+¦   +-- .env.example            # Environment variables template
+¦   +-- package.json            # Backend dependencies
+¦   +-- server.js               # Express server & production static file serving
+¦
++-- frontend/
+¦   +-- src/
+¦   ¦   +-- components/
+¦   ¦   ¦   +-- EditorToolbar.jsx   # Rich text formatting buttons
+¦   ¦   ¦   +-- QRCodeModal.jsx     # Scannable & downloadable QR code modal
+¦   ¦   ¦   +-- SettingsModal.jsx   # Note auto-destruction (TTL) modal
+¦   ¦   ¦   +-- ThemeToggle.jsx     # Sun/Moon dark-light mode switch
+¦   ¦   +-- context/
+¦   ¦   ¦   +-- ThemeContext.jsx    # Persistent theme state manager
+¦   ¦   +-- pages/
+¦   ¦   ¦   +-- Home.jsx            # Landing page with custom slug input & quick generator
+¦   ¦   ¦   +-- NoteEditor.jsx      # Dynamic note editor with 1.5s debounced auto-save
+¦   ¦   +-- services/
+¦   ¦   ¦   +-- api.js              # Environment-aware backend API client
+¦   ¦   +-- App.jsx                 # Client-side routing (/, /:slug)
+¦   ¦   +-- index.css               # Tailwind CSS & TipTap typography
+¦   ¦   +-- main.jsx                # DOM mounting
+¦   +-- index.html              # HTML shell with Google Inter font
+¦   +-- package.json            # Frontend dependencies
+¦   +-- tailwind.config.js      # Tailwind configuration
+¦   +-- vite.config.js          # Vite config with API proxying
+¦
++-- .gitignore                  # Strict Git rules protecting .env and node_modules
++-- package.json                # Root deployment script (Render / Railway / Heroku)
++-- README.md                   # Project documentation
 ```
 
-> **Important:** Remember to replace `<YOUR_PASSWORD>` with your actual MongoDB user password. If your password contains special characters (like `@`, `#`, `%`), URL-encode them.
-
-### 2. Deploy to Render (Recommended - Free Web Service)
-1. Push this repository to GitHub.
-2. Go to [render.com](https://render.com) and click **New + > Web Service**.
-3. Connect your GitHub repository.
-4. Set the following settings:
-   - **Environment:** `Node`
-   - **Build Command:** `npm run build`
-   - **Start Command:** `npm start`
-5. Under **Environment Variables**, add:
-   - `MONGODB_URI` = `mongodb+srv://<username>:<YOUR_PASSWORD>@cluster0.example.mongodb.net/notex?retryWrites=true&w=majority`
-   - `NODE_ENV` = `production`
-6. Click **Deploy Web Service**. Render will automatically install dependencies, compile the React Vite bundle, and host both the frontend and backend on your live domain!
-
 ---
 
-## ðŸ’» Local Development
+## ?? Local Development Setup
 
-### 1. Backend
+### 1. Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [MongoDB](https://www.mongodb.com/) (local instance or MongoDB Atlas cluster)
+
+### 2. Clone the Repository
+```bash
+git clone https://github.com/NandanNayak-dev/NoteFlow.git
+cd NoteFlow
+```
+
+### 3. Backend Setup
 ```bash
 cd backend
 npm install
+```
+Create a `.env` file in the `backend/` directory:
+```env
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/noteflow
+CLIENT_URL=http://localhost:5173
+NODE_ENV=development
+```
+Start the backend server:
+```bash
 npm run dev
+# Server running on http://localhost:5000
 ```
 
-### 2. Frontend
+### 4. Frontend Setup
+In a new terminal window:
 ```bash
 cd frontend
 npm install
 npm run dev
+# Frontend running on http://localhost:5173
 ```
-Open [http://localhost:5173/](http://localhost:5173/) in your browser.
+
+---
+
+## ?? Production Deployment (Render)
+
+This project is configured as a single unified service:
+
+1. Push your repository to GitHub.
+2. In **[Render.com](https://render.com/)**, create a **New Web Service** and select your repository.
+3. Configure the build parameters:
+   - **Runtime:** `Node`
+   - **Build Command:** `npm run build`
+   - **Start Command:** `npm start`
+4. Set Environment Variables:
+   - `MONGODB_URI`: Your MongoDB Atlas connection string
+   - `NODE_ENV`: `production`
+5. Click **Deploy Web Service**. Render will install all dependencies, build the React frontend, and serve it via Express.
+
+---
+
+## ?? License
+
+This project is open-source and available under the [MIT License](LICENSE).
