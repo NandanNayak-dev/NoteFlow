@@ -3,13 +3,18 @@ node_modules/
 backend/node_modules/
 frontend/node_modules/
 
-# Environment Variables
+# Environment Variables (Ignored everywhere)
 .env
-backend/.env
-frontend/.env
+.env.*
+*.env
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
 *.local
 
 # Production Build Output
+dist/
 frontend/dist/
 
 # Logs
